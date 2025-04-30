@@ -19,7 +19,7 @@ module "eks_management_role" {
         {
           "Effect" : "Allow",
           "Principal" : {
-            "Federated" : "${module.git_oidc_provider.provider_arn}"
+            "Federated" : "${var.git_oidc_provider_arn}"
           },
           "Action" : "sts:AssumeRoleWithWebIdentity",
           "Condition" : {
@@ -51,7 +51,7 @@ module "ecr_push_role" {
         {
           "Effect" : "Allow",
           "Principal" : {
-            "Federated" : "${module.git_oidc_provider.provider_arn}"
+            "Federated" : "${var.git_oidc_provider_arn}"
           },
           "Action" : "sts:AssumeRoleWithWebIdentity",
           "Condition" : {
@@ -83,7 +83,7 @@ module "ssm_parameter_read_only_role" {
         {
           "Effect" : "Allow",
           "Principal" : {
-            "Federated" : "${module.git_oidc_provider.provider_arn}"
+            "Federated" : "${var.git_oidc_provider_arn}"
           },
           "Action" : "sts:AssumeRoleWithWebIdentity",
           "Condition" : {
