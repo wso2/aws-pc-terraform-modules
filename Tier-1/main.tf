@@ -8,13 +8,6 @@ module "ssh-key" {
   ssh_public_key = var.ssh_public_key
 }
 
-module "git_oidc_provider" {
-  source          = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/OpenID-Connect-Provider?ref=UnitOfWork"
-  thumbprint_list = []
-  tags            = var.default_tags
-  url             = "https://token.actions.githubusercontent.com"
-}
-
 module "vpc" {
   source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Network/VPC_Single?ref=main"
   region             = var.region
