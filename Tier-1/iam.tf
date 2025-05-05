@@ -5,6 +5,19 @@ locals {
 }
 
 #### IAM assume role for GitHub action for EKS cluster management, used by EKS access entry
+module "eks_management_iam_policy" {
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "eks_management"
+  policy = templatefile("${path.module}/resources/git_eks_access.json.tpl", {
+    ssm_parameter_arn = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/pc_deployment_parameters"
+    eks_cluster_arn   = "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${module.eks.cluster_name}"
+  })
+}
+
 module "eks_management_role" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
   project     = var.project
@@ -34,6 +47,7 @@ module "eks_management_role" {
       ]
     }
   )
+  policy_arns = [module.eks_management_role.iam_policy_arn]
 }
 
 #### IAM assume role for GitHub action for ECR Image publish
