@@ -91,16 +91,16 @@ resource "aws_ecr_repository_policy" "ecr_policy" {
 }
 
 module "eks" {
-  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main"
-  region                          = var.region
-  project                         = var.project
-  environment                     = var.environment
-  application                     = var.application
-  default_tags                    = var.default_tags
-  cluster_subnet_ids              = module.vpc.app_subnets_id
+  source                     = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main"
+  region                     = var.region
+  project                    = var.project
+  environment                = var.environment
+  application                = var.application
+  default_tags               = var.default_tags
+  cluster_subnet_ids         = module.vpc.app_subnets_id
   eks_endpoint_public_access = true
-  eks_public_access_cidrs         = ["203.94.95.0/24", "112.135.230.102/32", "0.0.0.0/0"]
-  k8s_version                     = var.k8s_version
+  eks_public_access_cidrs    = ["203.94.95.0/24", "112.135.230.102/32", "0.0.0.0/0"]
+  k8s_version                = var.k8s_version
   access_entry = [
     {
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
@@ -132,7 +132,7 @@ module "eks" {
 }
 
 module "nodegroup" {
-  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-NodeGroup?ref=main"
+  source       = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-NodeGroup?ref=main"
   region       = var.region
   project      = var.project
   environment  = var.environment
@@ -155,7 +155,7 @@ module "nodegroup" {
 }
 
 module "rds" {
-  source                =  "git::https://github.com/wso2/aws-cloud-terraform-modules.git//DataBase/RDS_MySql?ref=main"
+  source                = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//DataBase/RDS_MySql?ref=main"
   region                = var.region
   project               = var.project
   environment           = var.environment
@@ -173,17 +173,17 @@ module "rds" {
 }
 
 module "management_vm" {
-  source                 = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/VM-Management?ref=main"
-  region                 = var.region
-  project                = var.project
-  environment            = var.environment
-  application            = var.application
-  default_tags           = var.default_tags
-  ami_id                 = var.management_ami_id
-  ec2_instance_type      = "t3a.nano"
-  root_volume_size       = 20
-  iam_role_name          = module.management_vm_role.iam_role_name
-  ssh_key_name           = module.ssh-key.ssk_key_name
+  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/VM-Management?ref=main"
+  region             = var.region
+  project            = var.project
+  environment        = var.environment
+  application        = var.application
+  default_tags       = var.default_tags
+  ami_id             = var.management_ami_id
+  ec2_instance_type  = "t3a.nano"
+  root_volume_size   = 20
+  iam_role_name      = module.management_vm_role.iam_role_name
+  ssh_key_name       = module.ssh-key.ssk_key_name
   security_group_ids = [module.vpc.app_security_group_id]
-  subnet_id              = module.vpc.app_subnets_id[0]
+  subnet_id          = module.vpc.app_subnets_id[0]
 }
