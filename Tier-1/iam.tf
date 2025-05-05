@@ -14,7 +14,6 @@ module "eks_management_iam_policy" {
   application = "eks_management"
   policy = templatefile("${path.module}/resources/git_eks_access.json.tpl", {
     ssm_parameter_arn = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/pc_deployment_parameters"
-    eks_cluster_arn   = "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${module.eks.cluster_name}"
   })
 }
 
@@ -47,7 +46,7 @@ module "eks_management_role" {
       ]
     }
   )
-  policy_arns = [module.eks_management_role.iam_policy_arn]
+  policy_arns = [module.eks_management_iam_policy.iam_policy_arn]
 }
 
 #### IAM assume role for GitHub action for ECR Image publish
