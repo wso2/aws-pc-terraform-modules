@@ -247,7 +247,7 @@ module "csi_secret_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:default:${local.csi_secret_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.csi_secret_role_name}"
 
           }
         }
@@ -277,7 +277,7 @@ module "csi_ebs_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:default:${local.csi_ebs_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.csi_ebs_role_name}"
 
           }
         }
@@ -318,7 +318,7 @@ module "lb_controller_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:default:${local.lb_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.lb_role_name}"
 
           }
         }
