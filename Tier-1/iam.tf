@@ -82,13 +82,13 @@ module "ecr_push_role" {
 }
 
 #### IAM assume role for GitHub action for SSM Parameter Store get parameter
-module "ssm_parameter_read_only_role" {
+module "ssm_parameter_and_secret_read_only_role" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
   project     = var.project
   environment = var.environment
   region      = var.region
   tags        = var.default_tags
-  application = "ssm_parameter_read_only"
+  application = "parameter_read_only"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -247,7 +247,7 @@ module "csi_secret_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.csi_secret_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:database:${local.csi_secret_role_name}"
 
           }
         }
