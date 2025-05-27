@@ -82,6 +82,16 @@ module "ecr_push_role" {
 }
 
 #### IAM assume role for GitHub action for SSM Parameter Store get parameter
+module "ssm_parameter_and_secret_read_only_iam_policy" {
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "ssm_parameter_and_secret_read_only"
+  policy      = file("${path.module}/resources/ssm_parameter_and_secret_read_only_role.json")
+}
+
 module "ssm_parameter_and_secret_read_only_role" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
   project     = var.project
@@ -111,7 +121,7 @@ module "ssm_parameter_and_secret_read_only_role" {
       ]
     }
   )
-  policy_arns = ["arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"]
+  policy_arns = [module.ssm_parameter_and_secret_read_only_iam_policy.iam_policy_arn]
 }
 
 ##### IAM role for management VM, also grant access to eks cluster via EKS access entry
