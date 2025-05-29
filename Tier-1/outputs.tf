@@ -43,3 +43,6 @@ output "eks_management_role_arn" {
 output "ssm_parameter_and_secret_read_only_role" {
   value = module.ssm_parameter_and_secret_read_only_role.iam_role_arn
 }
+output "secretmanager_write_only_role" {
+  value = module.secretmanager_write_only_role.iam_role_arn
+}
