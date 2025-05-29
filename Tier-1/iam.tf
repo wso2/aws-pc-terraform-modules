@@ -1,7 +1,8 @@
 locals {
-  lb_role_name         = "sa-loadbalancer-controller-role"
-  csi_secret_role_name = "sa-csi-secret-role"
-  csi_ebs_role_name    = "sa-csi-ebs-role"
+  loadbalancer_controller_service_account_name = "sa-loadbalancer-controller-role"
+  csi_secret_driver_service_account_name       = "sa-csi-secret-role"
+  csi_ebs_driver_service_account_name          = "sa-csi-ebs-role"
+  wso2_apim_service_account_name               = "sa-wso2am-apim"
 }
 
 #### IAM assume role for GitHub action for EKS cluster management, used by EKS access entry
@@ -300,8 +301,10 @@ module "csi_secret_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:database:${local.csi_secret_role_name}"
-
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : [
+              "system:serviceaccount:database:${local.csi_secret_driver_service_account_name}",
+              "system:serviceaccount:wso2-pc-application:${local.wso2_apim_service_account_name}"
+            ]
           }
         }
       }
@@ -330,7 +333,7 @@ module "csi_ebs_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.csi_ebs_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.csi_ebs_driver_service_account_name}"
 
           }
         }
@@ -371,7 +374,7 @@ module "lb_controller_role" {
         "Condition" : {
           "StringEquals" : {
             "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:aud" : "sts.amazonaws.com",
-            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.lb_role_name}"
+            "${replace(module.eks.eks_cluster_issuer_url, "https://", "")}:sub" : "system:serviceaccount:drivers:${local.loadbalancer_controller_service_account_name}"
 
           }
         }
