@@ -142,7 +142,7 @@ module "secretmanager_write_only_role" {
   environment = var.environment
   region      = var.region
   tags        = var.default_tags
-  application = "parameter_read_only"
+  application = "secretmanager_write_only_role"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
