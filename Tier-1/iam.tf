@@ -126,23 +126,23 @@ module "ssm_parameter_and_secret_read_only_role" {
 }
 
 #### IAM assume role for GitHub action for SecretStore Writes
-module "secret_write_only_iam_policy" {
+module "secret_ana_parameter_write_only_iam_policy" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
   project     = var.project
   environment = var.environment
   region      = var.region
   tags        = var.default_tags
-  application = "secret_write_only"
+  application = "secret_and_parameter_write_only"
   policy      = file("${path.module}/resources/secret_write_only_policy.json")
 }
 
-module "secretmanager_write_only_role" {
+module "secret_and_parameter_write_only_role" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
   project     = var.project
   environment = var.environment
   region      = var.region
   tags        = var.default_tags
-  application = "secretmanager_write_only"
+  application = "secret_and_parameter_write_only"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -165,7 +165,7 @@ module "secretmanager_write_only_role" {
       ]
     }
   )
-  policy_arns = [module.secret_write_only_iam_policy.iam_policy_arn]
+  policy_arns = [module.secret_ana_parameter_write_only_iam_policy.iam_policy_arn]
 }
 
 ##### IAM role for management VM, also grant access to eks cluster via EKS access entry
