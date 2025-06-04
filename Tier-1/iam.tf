@@ -51,6 +51,16 @@ module "eks_management_role" {
 }
 
 #### IAM assume role for GitHub action for ECR Image publish
+module "ecr_push_only_iam_policy" {
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "ecr_push_only"
+  policy      = file("${path.module}/resources/ecr_push_only_policy.json")
+}
+
 module "ecr_push_role" {
   source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
   project     = var.project
@@ -80,6 +90,7 @@ module "ecr_push_role" {
       ]
     }
   )
+  policy_arns = [module.ecr_push_only_iam_policy.iam_policy_arn]
 }
 
 #### IAM assume role for GitHub action for SSM Parameter Store get parameter
