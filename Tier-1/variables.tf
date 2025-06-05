@@ -18,6 +18,7 @@ variable "default_tags" {
   type        = map(string)
   description = "Map of default tags to apply to all resources deployed during Private Cloud deployment."
 }
+
 variable "enable_tier_two" {
   type        = bool
   description = "Enable Tier two."
@@ -68,4 +69,76 @@ variable "k8s_repo" {
 variable "git_oidc_provider_arn" {
   type        = string
   description = "Arn of the github oidc provider."
+}
+
+# CI
+variable "github_personal_access_token" {
+  type        = string
+  description = "Github Org Personal Access Token"
+}
+
+variable "github_org_name" {
+  description = "Github Org Name"
+  type        = string
+}
+
+variable "ci_project_integration_build_repo_name" {
+  description = "The name of the CI project IS build repo"
+  type        = string
+}
+
+variable "devops_ci_project_build_branch" {
+  description = "The name of the CI project build repo"
+  type        = string
+}
+
+variable "ci_bucket_name" {
+  description = "S3 bucket name for codepipeline"
+  type        = string
+  default = "test-bucket"
+}
+
+variable "devops_ci_project_integration_build_yml_path" {
+  description = "The path of the CI project IS build yml"
+  type        = string
+  default     = "ci-pipelines/azure-pipeline-001.yml"
+}
+
+variable "cd_project_integration_build_repo_name" {
+  description = "The name of the CI project IS build repo"
+  type        = string
+}
+
+variable "devops_cd_project_build_branch" {
+  description = "The name of the CI project build repo"
+  type        = string
+}
+
+variable "cd_bucket_name" {
+  description = "S3 bucket name for codepipeline for CD"
+  type        = string
+  default = "test-bucket"
+}
+
+variable "integration_bucket_name" {
+  description = "S3 bucket name for codepipeline for integration"
+  type        = string
+  default = "test-bucket"
+}
+
+variable "admin_role" {
+  type        = string
+  description = "Admin role ARN to access AWS resources."
+}
+
+variable "enable_ecr_repo_creation" {
+  type        = bool
+  description = "Enable ECR repository creation."
+  default     = true
+}
+
+variable "enable_cicd" {
+  type        = bool
+  description = "Enable CI/CD resource creation."
+  default     = true
 }
