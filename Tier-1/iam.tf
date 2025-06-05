@@ -238,6 +238,7 @@ module "eks_node_group_role" {
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
   ]
 }
 
@@ -393,4 +394,128 @@ module "lb_controller_role" {
     ]
   })
   policy_arns = [module.lb_controller_iam_policy.iam_policy_arn]
+}
+
+# IAM roles for CICD
+
+module "codebuild_iam_policy" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "codebuild"
+  policy      = file("${path.module}/resources/codebuild-iam-policy.json")
+}
+
+module "codebuild_role" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "codebuild"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "codebuild.amazonaws.com"
+      }
+      Effect = "Allow"
+    }]
+  })
+  policy_arns = var.enable_cicd ? [module.codebuild_iam_policy[0].iam_policy_arn] : []
+}
+
+module "codepipeline_iam_policy" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "s3_management"
+  policy      = file("${path.module}/resources/codepipeline-iam-policy.json")
+}
+
+module "codepipeline_role" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "codepipeline"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "codepipeline.amazonaws.com"
+      }
+      Effect = "Allow"
+    }]
+  })
+  policy_arns = var.enable_cicd ? [module.codepipeline_iam_policy[0].iam_policy_arn] : []
+}
+
+module "cd_codebuild_iam_policy" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Policy?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "cd-codebuild"
+  policy      = file("${path.module}/resources/cd-codebuild-iam-policy.json")
+}
+
+module "cd_codebuild_role" {
+  count       = var.enable_cicd ? 1 : 0
+  source      = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/IAM-Role?ref=UnitOfWork"
+  project     = var.project
+  environment = var.environment
+  region      = var.region
+  tags        = var.default_tags
+  application = "cd-codebuild"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "codebuild.amazonaws.com"
+        }
+        Effect = "Allow"
+      },
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = var.admin_role
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+  policy_arns = var.enable_cicd ? [module.cd_codebuild_iam_policy[0].iam_policy_arn] : []
+}
+
+module "eks_access_entry" {
+  count            = var.enable_cicd ? 1 : 0
+  source           = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/EKS-Access-Entry?ref=UnitOfWork"
+  eks_cluster_name = module.eks.cluster_name
+  principal_arn    = module.cd_codebuild_role[0].iam_role_arn
+  type             = "STANDARD"
+}
+
+module "eks_access_policy" {
+  count            = var.enable_cicd ? 1 : 0
+  source           = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/EKS-Access-Policy?ref=UnitOfWork"
+  eks_cluster_name = module.eks.cluster_name
+  principal_arn    = module.cd_codebuild_role[0].iam_role_arn
+  policy_arn       = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  type             = "cluster"
 }
