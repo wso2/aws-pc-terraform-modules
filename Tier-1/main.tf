@@ -41,6 +41,7 @@ module "vpc" {
 }
 
 module "ecr" {
+  count           = var.enable_ecr_repo_creation ? 1 : 0
   source          = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/ECR?ref=UnitOfWork"
   project         = var.project
   environment     = var.environment
@@ -51,6 +52,8 @@ module "ecr" {
 }
 
 data "aws_iam_policy_document" "admin_policy" {
+  count = var.enable_ecr_repo_creation ? 1 : 0
+
   statement {
     sid    = "Push only policy"
     effect = "Allow"
@@ -68,6 +71,7 @@ data "aws_iam_policy_document" "admin_policy" {
       "ecr:UploadLayerPart"
     ]
   }
+
   statement {
     sid    = "Pull only policy"
     effect = "Allow"
@@ -86,8 +90,9 @@ data "aws_iam_policy_document" "admin_policy" {
 }
 
 resource "aws_ecr_repository_policy" "ecr_policy" {
-  repository = module.ecr.ecr_id
-  policy     = data.aws_iam_policy_document.admin_policy.json
+  count      = var.enable_ecr_repo_creation ? 1 : 0
+  repository = module.ecr[0].ecr_id
+  policy     = data.aws_iam_policy_document.admin_policy[0].json
 }
 
 module "eks" {
