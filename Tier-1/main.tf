@@ -41,6 +41,7 @@ module "vpc" {
 }
 
 module "ecr" {
+  count           = var.enable_ecr_repo_creation ? 1 : 0
   source          = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/ECR?ref=UnitOfWork"
   project         = var.project
   environment     = var.environment
@@ -51,6 +52,8 @@ module "ecr" {
 }
 
 data "aws_iam_policy_document" "admin_policy" {
+  count = var.enable_ecr_repo_creation ? 1 : 0
+
   statement {
     sid    = "Push only policy"
     effect = "Allow"
@@ -68,6 +71,7 @@ data "aws_iam_policy_document" "admin_policy" {
       "ecr:UploadLayerPart"
     ]
   }
+
   statement {
     sid    = "Pull only policy"
     effect = "Allow"
@@ -86,8 +90,9 @@ data "aws_iam_policy_document" "admin_policy" {
 }
 
 resource "aws_ecr_repository_policy" "ecr_policy" {
-  repository = module.ecr.ecr_id
-  policy     = data.aws_iam_policy_document.admin_policy.json
+  count      = var.enable_ecr_repo_creation ? 1 : 0
+  repository = module.ecr[0].ecr_id
+  policy     = data.aws_iam_policy_document.admin_policy[0].json
 }
 
 module "eks" {
@@ -186,4 +191,30 @@ module "management_vm" {
   ssh_key_name       = module.ssh-key.ssk_key_name
   security_group_ids = [module.vpc.app_security_group_id]
   subnet_id          = module.vpc.app_subnets_id[0]
+}
+
+module "cicd" {
+  source                                 = "./modules/CICD"
+  region                                 = var.region
+  project                                = var.project
+  environment                            = var.environment
+  application                            = var.application
+  buildspec_injector_path                = "${path.module}/resources/buildspec-injector.yml"
+  codebuild_iam_policy_path              = "${path.module}/resources/codebuild-iam-policy.json"
+  codepipeline_iam_policy_path           = "${path.module}/resources/codepipeline-iam-policy.json"
+  cd_codebuild_iam_policy_path           = "${path.module}/resources/cd-codebuild-iam-policy.json"
+  github_org_name                        = var.github_org_name
+  github_personal_access_token           = var.github_personal_access_token
+  devops_ci_project_build_branch         = var.devops_ci_project_build_branch
+  ci_project_integration_build_repo_name = var.ci_project_integration_build_repo_name
+  ci_bucket_name                         = var.ci_bucket_name
+  devops_cd_project_build_branch         = var.devops_cd_project_build_branch
+  cd_project_integration_build_repo_name = var.cd_project_integration_build_repo_name
+  cd_bucket_name                         = var.cd_bucket_name
+  integration_bucket_name                = var.integration_bucket_name
+  admin_role                             = var.admin_role
+  enable_ecr_repo_creation               = var.enable_ecr_repo_creation
+  default_tags                           = var.default_tags
+  cluster_name                           = module.eks.cluster_name
+  aws_account_id                         = data.aws_caller_identity.current.account_id
 }
