@@ -209,7 +209,10 @@ module "management_vm_role" {
       },
     ]
   })
-  policy_arns = [module.management_vm_iam_policy.iam_policy_arn]
+  policy_arns = [
+    module.management_vm_iam_policy.iam_policy_arn,
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  ]
 }
 
 ##### IAM role for EBS CSI role, allow access to eks cluster via OIDC
