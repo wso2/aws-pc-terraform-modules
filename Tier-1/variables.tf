@@ -49,6 +49,11 @@ variable "management_ami_id" {
   type        = string
   description = "AMI id for management instance."
 }
+variable "management_size" {
+  type        = string
+  description = "Instance type for Management VM"
+  default = "t3a.nano"
+}
 variable "public_allow_cidrs" {
   type        = list(string)
   description = "List of CIDR ranges allow to access Private Cloud deployment."

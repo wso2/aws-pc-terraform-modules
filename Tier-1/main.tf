@@ -180,7 +180,7 @@ module "management_vm" {
   application        = var.application
   default_tags       = var.default_tags
   ami_id             = var.management_ami_id
-  ec2_instance_type  = "t3a.nano"
+  ec2_instance_type  = var.management_size
   root_volume_size   = 20
   iam_role_name      = module.management_vm_role.iam_role_name
   ssh_key_name       = module.ssh-key.ssk_key_name
