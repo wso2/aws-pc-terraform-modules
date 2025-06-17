@@ -58,10 +58,6 @@ variable "public_allow_cidrs" {
   type        = list(string)
   description = "List of CIDR ranges allow to access Private Cloud deployment."
 }
-variable "user_db_secret_arn" {
-  type        = string
-  description = "ARN of the DB user secret. Which used to access Database by APIM application."
-}
 variable "ssh_public_key" {
   type        = string
   description = "SSH public key as a sting."

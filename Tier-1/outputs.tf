@@ -13,9 +13,6 @@ output "db_hostname" {
 output "rds_root_secret_arn" {
   value = module.rds.db_root_secret_arn
 }
-output "rds_user_secret_arn" {
-  value = var.user_db_secret_arn
-}
 output "rds_root_secret_name" {
   value = module.rds.rds_root_secret_name
 }
