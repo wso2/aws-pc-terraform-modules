@@ -1,8 +1,8 @@
 locals {
-  loadbalancer_controller_service_account_name = "sa-loadbalancer-controller-role"
-  csi_secret_driver_service_account_name       = "sa-csi-secret-role"
-  csi_ebs_driver_service_account_name          = "sa-csi-ebs-role"
-  wso2_apim_service_account_name               = "sa-wso2am-apim"
+  loadbalancer_controller_service_account_name = "wso2pc-sa-loadbalancer-controller-role"
+  csi_secret_driver_service_account_name       = "wso2pc-sa-csi-secret-role"
+  csi_ebs_driver_service_account_name          = "wso2pc-sa-csi-ebs-role"
+  wso2_apim_service_account_name               = "wso2pc-sa-wso2am-apim"
 }
 
 #### IAM assume role for GitHub action for EKS cluster management, used by EKS access entry
