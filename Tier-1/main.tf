@@ -148,7 +148,7 @@ module "nodegroup" {
     min_size               = 2
     max_size               = 2
     desired_size           = 2
-    max_unavailable        = 2
+    max_unavailable        = 1
     k8s_version            = var.k8s_version
     instance_types         = var.eks_instance_types
   }
