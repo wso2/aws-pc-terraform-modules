@@ -40,7 +40,7 @@ module "eks_management_role" {
               "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
             },
             "StringLike" : {
-              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}"
+              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}:*"
             }
           }
         }
@@ -83,7 +83,7 @@ module "ecr_push_role" {
               "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
             },
             "StringLike" : {
-              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}"
+              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}:*"
             }
           }
         }
@@ -126,7 +126,7 @@ module "ssm_parameter_and_secret_read_only_role" {
               "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
             },
             "StringLike" : {
-              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}"
+              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}:*"
             }
           }
         }
@@ -169,7 +169,7 @@ module "secret_and_parameter_write_only_role" {
               "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
             },
             "StringLike" : {
-              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}"
+              "token.actions.githubusercontent.com:sub" : "repo:${var.k8s_repo}:*"
             }
           }
         }
