@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Cloning CI repo with token..."
+      - git clone https://$GITHUB_TOKEN@github.com/dilorg/ci-infra-integration-pc.git ci-repo
+  build:
+    commands:
+      - echo "Injecting external buildspec.yml into source root..."
+      - cp ci-repo/buildspec.yml ./buildspec.yml
+artifacts:
+  files:
+    - '**/*'

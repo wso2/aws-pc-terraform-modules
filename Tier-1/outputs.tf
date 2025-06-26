@@ -29,13 +29,13 @@ output "public_security_group_id" {
   value = module.vpc.public_security_group_id
 }
 output "ecr_repository_name" {
-  value = module.ecr.ecr_repository_url
+  value = var.enable_ecr_repo_creation ? module.ecr.ecr_repository_url : null
 }
 output "ecr_push_role_arn" {
   value = module.ecr_push_role.iam_role_arn
 }
 output "eks_management_role_arn" {
-  value = module.ecr.ecr_repository_url
+  value = var.enable_ecr_repo_creation ? module.ecr[0].ecr_repository_url : null
 }
 output "ssm_parameter_and_secret_read_only_role" {
   value = module.ssm_parameter_and_secret_read_only_role.iam_role_arn
