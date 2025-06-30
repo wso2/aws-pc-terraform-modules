@@ -142,3 +142,19 @@ module "management_vm" {
   security_group_ids = [module.vpc.app_security_group_id]
   subnet_id          = module.vpc.app_subnets_id[0]
 }
+
+module "customizations" {
+  source           = "./customizations"
+  region           = var.region
+  project          = var.project
+  environment      = var.environment
+  default_tags     = var.default_tags
+  application      = var.application
+  eks_cluster_name = module.eks.cluster_name
+
+  ecr_name                         = module.ecr.ecr_id
+  eks_node_group_role_iam_role_arn = module.eks_node_group_role.iam_role_arn
+
+  git_oidc_provider_arn = var.git_oidc_provider_arn
+  k8s_repo              = var.k8s_repo
+}
