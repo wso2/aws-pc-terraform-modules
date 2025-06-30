@@ -50,46 +50,6 @@ module "ecr" {
   image_repo_name = "wso2_apim_private_cloud"
 }
 
-data "aws_iam_policy_document" "admin_policy" {
-  statement {
-    sid    = "Push only policy"
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = [module.ecr_push_role.iam_role_arn]
-    }
-
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:CompleteLayerUpload",
-      "ecr:InitiateLayerUpload",
-      "ecr:PutImage",
-      "ecr:UploadLayerPart"
-    ]
-  }
-  statement {
-    sid    = "Pull only policy"
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = [module.eks_node_group_role.iam_role_arn]
-    }
-
-    actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability"
-    ]
-  }
-}
-
-resource "aws_ecr_repository_policy" "ecr_policy" {
-  repository = module.ecr.ecr_id
-  policy     = data.aws_iam_policy_document.admin_policy.json
-}
-
 module "eks" {
   source                     = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main"
   region                     = var.region
@@ -105,11 +65,6 @@ module "eks" {
     {
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
       principal_arn = module.management_vm_role.iam_role_arn
-      type          = "cluster"
-    },
-    {
-      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-      principal_arn = module.eks_management_role.iam_role_arn
       type          = "cluster"
     }
   ]

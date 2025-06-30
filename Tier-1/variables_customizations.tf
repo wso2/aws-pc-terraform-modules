@@ -1,0 +1,1 @@
+# variables related to customizations
