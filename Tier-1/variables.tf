@@ -59,6 +59,10 @@ variable "management_size" {
   description = "Instance type for Management VM"
   default = "t3a.nano"
 }
+variable "eks_public_access_cidrs" {
+  type        = list(string)
+  description = "List of CIDR ranges allow to access EKS API endpoint."
+}
 variable "public_allow_cidrs" {
   type        = list(string)
   description = "List of CIDR ranges allow to access Private Cloud deployment."
