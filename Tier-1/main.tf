@@ -59,7 +59,7 @@ module "eks" {
   default_tags               = var.default_tags
   cluster_subnet_ids         = module.vpc.app_subnets_id
   eks_endpoint_public_access = true
-  eks_public_access_cidrs    = ["203.94.95.0/24", "112.135.230.102/32", "0.0.0.0/0"]
+  eks_public_access_cidrs    = var.eks_public_access_cidrs
   k8s_version                = var.k8s_version
   access_entry = [
     {
