@@ -100,9 +100,9 @@ module "nodegroup" {
     eks_cluster_name       = module.eks.cluster_name
     node_role_arn          = module.eks_node_group_role.iam_role_arn
     subnet_ids             = module.vpc.app_subnets_id
-    min_size               = 2
-    max_size               = 2
-    desired_size           = 2
+    min_size               = 3
+    max_size               = 3
+    desired_size           = 3
     max_unavailable        = 1
     k8s_version            = var.k8s_version
     instance_types         = var.eks_instance_types
