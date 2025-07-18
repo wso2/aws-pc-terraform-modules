@@ -66,6 +66,7 @@ runs:
     shell: bash
     run: |
       output=$(terraform output -json | jq -c 'with_entries({ key: .key, value: .value.value })')
-      data=$(echo '${{steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
-      echo "::add-mask::$data"
+      echo '${{ steps.parameters.outputs.params }}' 
+      data=$(echo '${{ steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
+      # echo "::add-mask::$data"
       aws ssm put-parameter --name pc_deployment_parameters --type String --value "${data}" --overwrite
