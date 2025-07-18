@@ -51,7 +51,7 @@ runs:
   
   - name: Initialize Terraform
     shell: bash
-    working-directory: ./Infrastructure
+    working-directory: LocalRepo/Infrastructure
     run: |
       export AWS_REGION=${{inputs.region}}
       terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
