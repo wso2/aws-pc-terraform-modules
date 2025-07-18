@@ -66,6 +66,7 @@ runs:
     shell: bash
     run: |
       output=$(terraform output -json | jq -c 'with_entries({ key: .key, value: .value.value })')
+      terraform output -json 
       echo $output 
       echo '${{ steps.parameters.outputs.params }}' 
       data=$(echo '${{ steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
