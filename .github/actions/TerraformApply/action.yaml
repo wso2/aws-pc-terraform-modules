@@ -43,7 +43,7 @@ runs:
     shell: bash
     run: |
       params=$(aws ssm get-parameter --name pc_deployment_parameters --query Parameter.Value | jq -r '.')
-      echo "::add-mask::$params"
+      # echo "::add-mask::$params"
       echo params=$params >> $GITHUB_OUTPUT  
   
   - name: Install Terraform
@@ -69,4 +69,5 @@ runs:
       echo '${{ steps.parameters.outputs.params }}' 
       data=$(echo '${{ steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
       # echo "::add-mask::$data"
+      echo $data
       aws ssm put-parameter --name pc_deployment_parameters --type String --value "${data}" --overwrite
