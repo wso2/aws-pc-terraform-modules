@@ -1,0 +1,44 @@
+name: "Remove Cloud Resources"
+
+inputs:
+  account_id:
+    description: 'AWS Account ID'
+    required: true
+  region:
+    description: 'AWS Region'
+    required: true
+  tf_state_bucket_name:
+    description: 'Deployment Environment (e.g., dev, prod)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Authenticate AWS
+    uses: aws-actions/configure-aws-credentials@v4
+    with:
+      aws-region: ${{inputs.region}}
+      role-to-assume: arn:aws:iam::${{inputs.account_id}}:role/wso2pc_infrastructure_management_role
+      role-session-name: GitHubActions_DB_Migrations
+      unset-current-credentials: true  
+  - name: Get up deployment parameters
+    id: parameters
+    shell: bash
+    run: |
+      params=$(aws ssm get-parameter --name pc_deployment_parameters --query Parameter.Value | jq -r '.')
+      echo "::add-mask::$params"
+      echo params=$params >> $GITHUB_OUTPUT  
+
+  - name: Install Terraform
+    uses: hashicorp/setup-terraform@v3   
+  
+  - name: Terraform Destroy
+    shell: bash
+    working-directory: LocalRepo/Infrastructure
+    run: |
+      export AWS_REGION=${{inputs.region}}
+      terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
+      terraform destroy --auto-approve \
+        -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
+        -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
+        -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')"

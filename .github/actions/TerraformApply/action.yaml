@@ -1,0 +1,72 @@
+name: "Deploy Cloud Resources"
+
+inputs:
+  account_id:
+    description: 'AWS Account ID'
+    required: true
+  region:
+    description: 'AWS Region'
+    required: true
+  tf_state_bucket_name:
+    description: 'Deployment Environment (e.g., dev, prod)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Authenticate AWS
+    uses: aws-actions/configure-aws-credentials@v4
+    with:
+      aws-region: ${{inputs.region}}
+      role-to-assume: arn:aws:iam::${{inputs.account_id}}:role/wso2pc_infrastructure_management_role
+      role-session-name: GitHubActions_InfraCreation
+      unset-current-credentials: true  
+  
+  - name: Check for state S3 bucket
+    shell: bash
+    run: |
+      if aws s3api head-bucket --bucket ${{inputs.tf_state_bucket_name}} 2>/dev/null; then
+          echo "TF_STATE_Bucket=true" >> $GITHUB_ENV
+      else
+          echo "TF_STATE_Bucket=false" >> $GITHUB_ENV
+      fi  
+  
+  - name: Create terraform state bucket
+    if: env.TF_STATE_Bucket == 'false'
+    shell: bash
+    run: |
+      aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} --region ${{inputs.region}}
+      echo "TF_STATE_Bucket=true" >> $GITHUB_ENV
+  
+  - name: Get up deployment parameters
+    id: parameters
+    shell: bash
+    run: |
+      params=$(aws ssm get-parameter --name pc_deployment_parameters --query Parameter.Value | jq -r '.')
+      echo "::add-mask::$params"
+      echo params=$params >> $GITHUB_OUTPUT  
+  
+  - name: Install Terraform
+    uses: hashicorp/setup-terraform@v3 
+  
+  - name: Initialize Terraform
+    shell: bash
+    working-directory: LocalRepo/Infrastructure
+    run: |
+      export AWS_REGION=${{inputs.region}}
+      terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
+      terraform plan \
+          -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
+          -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
+          -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')" \
+          -out=plan_file.tfstate
+      terraform apply 'plan_file.tfstate'  
+  
+  - name: Update Deployment Parameter
+    working-directory: LocalRepo/Infrastructure
+    shell: bash
+    run: |
+      output=$(terraform output -json | jq -c 'with_entries({ key: .key, value: .value.value })')
+      data=$(echo '${{steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
+      echo "::add-mask::$data"
+      aws ssm put-parameter --name pc_deployment_parameters --type String --value "${data}" --overwrite
