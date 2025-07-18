@@ -17,8 +17,8 @@ runs:
   - name: Authenticate AWS
     uses: aws-actions/configure-aws-credentials@v4
     with:
-      aws-region: ${{env.region}}
-      role-to-assume: arn:aws:iam::${{env.account_id}}:role/wso2pc_infrastructure_management_role
+      aws-region: ${{inputs.region}}
+      role-to-assume: arn:aws:iam::${{inputs.account_id}}:role/wso2pc_infrastructure_management_role
       role-session-name: GitHubActions_DB_Migrations
       unset-current-credentials: true  
   - name: Get up deployment parameters
@@ -36,8 +36,8 @@ runs:
     shell: bash
     working-directory: LocalRepo/Infrastructure
     run: |
-      export AWS_REGION=${{env.region}}
-      terraform init -backend-config='bucket=${{env.tf_state_bucket_name}}'
+      export AWS_REGION=${{inputs.region}}
+      terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
       terraform destroy --auto-approve \
         -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
         -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
