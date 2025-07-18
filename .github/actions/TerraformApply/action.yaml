@@ -63,6 +63,7 @@ runs:
       terraform apply 'plan_file.tfstate'  
   
   - name: Update Deployment Parameter
+    working-directory: LocalRepo/Infrastructure
     shell: bash
     run: |
       output=$(terraform output -json | jq -c 'with_entries({ key: .key, value: .value.value })')
