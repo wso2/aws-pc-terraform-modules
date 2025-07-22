@@ -45,6 +45,11 @@ variable "eks_instance_types" {
   default     = ["t3a.medium"]
   description = "EKS instance type for Private Cloud deployment."
 }
+variable "eks_instance_count" {
+  type        = number
+  default     = 4
+  description = "Number of EKS instances for Private Cloud deployment."
+}
 variable "management_ami_id" {
   type        = string
   description = "AMI id for management instance."
