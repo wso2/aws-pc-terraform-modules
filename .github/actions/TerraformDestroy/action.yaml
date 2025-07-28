@@ -34,7 +34,7 @@ runs:
   
   - name: Terraform Destroy
     shell: bash
-    working-directory: LocalRepo/Infrastructure
+    working-directory: Infrastructure
     run: |
       export AWS_REGION=${{inputs.region}}
       terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
