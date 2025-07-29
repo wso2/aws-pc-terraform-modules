@@ -58,7 +58,7 @@ runs:
       terraform plan \
           -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
           -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')" \
-          -var "k8s_repo=${{ github.repository }}" \
+          -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
           -out=plan_file.tfstate
       terraform apply 'plan_file.tfstate'  
   
