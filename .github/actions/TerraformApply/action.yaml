@@ -56,6 +56,7 @@ runs:
       export AWS_REGION=${{inputs.region}}
       terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
       terraform plan \
+          -var "region=${{inputs.region}}" \
           -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
           -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')" \
           -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
