@@ -48,6 +48,7 @@ module "ecr" {
   application     = var.application
   tags            = var.default_tags
   image_repo_name = "wso2_apim_private_cloud"
+  image_tag_mutability = "MUTABLE"
 }
 
 module "eks" {
