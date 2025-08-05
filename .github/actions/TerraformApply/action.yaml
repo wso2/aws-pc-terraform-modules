@@ -38,7 +38,10 @@ runs:
     if: env.TF_STATE_Bucket == 'false'
     shell: bash
     run: |
-      aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} --region ${{inputs.region}}
+      aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} \
+       --region ${{inputs.region}} \
+       --create-bucket-configuration LocationConstraint=${{inputs.region}} 
+       
       echo "TF_STATE_Bucket=true" >> $GITHUB_ENV
   
   - name: Get up deployment parameters
