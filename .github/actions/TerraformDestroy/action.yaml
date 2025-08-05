@@ -7,8 +7,11 @@ inputs:
   region:
     description: 'AWS Region'
     required: true
-  tf_state_bucket_name:
+  environment:
     description: 'Deployment Environment (e.g., dev, prod)'
+    required: true
+  tf_state_bucket_name:
+    description: 'Terraform state S3 bucket name'
     required: true
 
 runs:
@@ -40,6 +43,7 @@ runs:
       terraform init -backend-config='bucket=${{inputs.tf_state_bucket_name}}'
       terraform destroy --auto-approve \
         -var "region=${{inputs.region}}" \
+        -var "environment=${{inputs.environment}}" \
         -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
         -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
         -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')"
