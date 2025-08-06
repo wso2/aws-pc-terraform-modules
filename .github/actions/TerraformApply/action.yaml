@@ -38,9 +38,14 @@ runs:
     if: env.TF_STATE_Bucket == 'false'
     shell: bash
     run: |
-      aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} \
-       --region ${{inputs.region}} \
-       --create-bucket-configuration LocationConstraint=${{inputs.region}} 
+      if [ "${{inputs.region}}" = "us-east-1" ]; then
+        aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} \
+        --region ${{inputs.region}} 
+      else
+        aws s3api create-bucket --bucket ${{inputs.tf_state_bucket_name}} \
+        --region ${{inputs.region}} \
+        --create-bucket-configuration LocationConstraint=${{inputs.region}}
+      fi
        
       echo "TF_STATE_Bucket=true" >> $GITHUB_ENV
   
