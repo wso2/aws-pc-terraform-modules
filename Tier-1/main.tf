@@ -106,6 +106,7 @@ module "nodegroup" {
     desired_size           = var.eks_instance_count
     max_unavailable        = 1
     k8s_version            = var.k8s_version
+    ami_type               = var.ami_type
     instance_types         = var.eks_instance_types
   }
 }

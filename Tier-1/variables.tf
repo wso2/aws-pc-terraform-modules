@@ -36,6 +36,10 @@ variable "k8s_version" {
   type        = string
   description = "K8s version for Private Cloud deployment."
 }
+variable "ami_type" {
+  type        = string
+  description = "AMI type to be used for the node group."
+}
 variable "mysql_db_type" {
   type        = string
   description = "RDS Database type for Private Cloud deployment."
