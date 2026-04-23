@@ -13,7 +13,10 @@ inputs:
   tf_state_bucket_name:
     description: 'Terraform state S3 bucket name'
     required: true
-
+  pc_deployment_parameter:
+    description: 'SSM Config Parameter'
+    required: true
+    
 runs:
   using: "composite"
   steps:
@@ -53,7 +56,7 @@ runs:
     id: parameters
     shell: bash
     run: |
-      params=$(aws ssm get-parameter --name pc_deployment_parameters --query Parameter.Value | jq -r '.')
+      params=$(aws ssm get-parameter --name ${{inputs.pc_deployment_parameter}} --query Parameter.Value | jq -r '.')
       echo "::add-mask::$params"
       echo params=$params >> $GITHUB_OUTPUT  
   
@@ -82,4 +85,4 @@ runs:
       output=$(terraform output -json | jq -c 'with_entries({ key: .key, value: .value.value })')
       data=$(echo '${{steps.parameters.outputs.params }}' | jq -rc ". + ${output}")
       echo "::add-mask::$data"
-      aws ssm put-parameter --name pc_deployment_parameters --type String --value "${data}" --overwrite
+      aws ssm put-parameter --name ${{inputs.pc_deployment_parameter}} --type String --value "${data}" --overwrite

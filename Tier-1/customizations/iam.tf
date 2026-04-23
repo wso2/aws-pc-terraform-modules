@@ -7,7 +7,7 @@ module "eks_management_iam_policy" {
   tags        = var.default_tags
   application = "eks_management"
   policy = templatefile("${path.module}/resources/git_eks_access.json.tpl", {
-    ssm_parameter_arn = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/pc_deployment_parameters"
+    ssm_parameter_arn = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/wso2pc_deployment_parameters_*"
   })
 }
 
