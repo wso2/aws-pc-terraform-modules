@@ -40,17 +40,6 @@ module "vpc" {
   availability_zones = local.availability_zones
 }
 
-module "ecr" {
-  source          = "git::https://github.com/wso2/aws-terraform-modules.git//modules/aws/ECR?ref=UnitOfWork"
-  project         = var.project
-  environment     = var.environment
-  region          = var.region
-  application     = var.application
-  tags            = var.default_tags
-  image_repo_name = "wso2_apim_private_cloud"
-  image_tag_mutability = "MUTABLE"
-}
-
 module "eks" {
   source                     = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main"
   region                     = var.region
