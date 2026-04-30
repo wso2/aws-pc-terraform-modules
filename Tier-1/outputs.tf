@@ -28,6 +28,3 @@ output "csi_ebs_role_name" {
 output "public_security_group_id" {
   value = module.vpc.public_security_group_id
 }
-output "ecr_repository_name" {
-  value = module.ecr.ecr_repository_url
-}
