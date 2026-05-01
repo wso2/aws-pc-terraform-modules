@@ -1,4 +1,5 @@
 name: "Deploy Cloud Resources"
+description: "This action deploys the required cloud resources using Terraform. It checks for the existence of the Terraform state S3 bucket and creates it if it doesn't exist. Then it initializes Terraform, plans the deployment, and applies the changes. Finally, it updates the deployment parameters in SSM Parameter Store."
 
 inputs:
   account_id:
@@ -74,6 +75,7 @@ runs:
           -var "environment=${{inputs.environment}}" \
           -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
           -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')" \
+          -var "ecr_name=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.ecr_name')" \
           -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
           -out=plan_file.tfstate
       terraform apply 'plan_file.tfstate'  

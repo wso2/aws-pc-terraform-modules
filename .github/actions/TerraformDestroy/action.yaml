@@ -1,4 +1,5 @@
 name: "Remove Cloud Resources"
+description: "This action removes the deployed cloud resources using Terraform."
 
 inputs:
   account_id:
@@ -49,4 +50,5 @@ runs:
         -var "environment=${{inputs.environment}}" \
         -var "git_oidc_provider_arn=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.git_oidc_provider_arn')" \
         -var "k8s_repo=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_repo')" \
+        -var "ecr_name=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.ecr_name')" \
         -var "k8s_version=$(echo '${{ steps.parameters.outputs.params }}' | jq -r '.k8s_version')"

@@ -8,3 +8,7 @@ variable "git_oidc_provider_arn" {
   type        = string
   description = "Arn of the github oidc provider."
 }
+variable "ecr_name" {
+  type        = string
+  description = "Name of the ECR repository."
+}
