@@ -74,6 +74,9 @@ module "eks" {
       security_group = module.vpc.management_security_group_id
     }
   ]
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "nodegroup" {
@@ -98,6 +101,9 @@ module "nodegroup" {
     ami_type               = var.ami_type
     instance_types         = var.eks_instance_types
   }
+  depends_on = [
+    module.eks
+  ]
 }
 
 module "rds" {
@@ -116,6 +122,9 @@ module "rds" {
   require_tls           = false
   deletion_protection   = false
   create_db_proxy       = var.enable_tier_two ? true : false
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "management_vm" {
@@ -132,4 +141,8 @@ module "management_vm" {
   ssh_key_name       = module.ssh-key.ssk_key_name
   security_group_ids = [module.vpc.app_security_group_id]
   subnet_id          = module.vpc.app_subnets_id[0]
+  depends_on = [
+    module.vpc,
+    module.ssh-key
+  ]
 }

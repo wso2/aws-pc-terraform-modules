@@ -61,7 +61,7 @@ variable "management_ami_id" {
 variable "management_size" {
   type        = string
   description = "Instance type for Management VM"
-  default = "t3a.nano"
+  default     = "t3a.nano"
 }
 variable "public_allow_cidrs" {
   type        = list(string)
