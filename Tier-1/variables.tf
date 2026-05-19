@@ -40,9 +40,9 @@ variable "ami_type" {
   type        = string
   description = "AMI type to be used for the node group."
 }
-variable "mysql_db_type" {
+variable "postgres_db_type" {
   type        = string
-  description = "RDS Database type for Private Cloud deployment."
+  description = "RDS PostgreSQL instance class for Private Cloud deployment."
 }
 variable "eks_instance_types" {
   type        = list(string)

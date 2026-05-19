@@ -9,7 +9,7 @@ module "ssh-key" {
 }
 
 module "vpc" {
-  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Network/VPC_Single?ref=main"
+  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Network/VPC_Single?ref=main-postgres"
   region             = var.region
   project            = var.project
   environment        = var.environment
@@ -41,7 +41,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                     = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main"
+  source                     = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-Cluster?ref=main-postgres"
   region                     = var.region
   project                    = var.project
   environment                = var.environment
@@ -80,7 +80,7 @@ module "eks" {
 }
 
 module "nodegroup" {
-  source       = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-NodeGroup?ref=main"
+  source       = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/EKS-NodeGroup?ref=main-postgres"
   region       = var.region
   project      = var.project
   environment  = var.environment
@@ -107,7 +107,7 @@ module "nodegroup" {
 }
 
 module "rds" {
-  source                = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//DataBase/RDS_MySql?ref=main"
+  source                = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//DataBase/RDS_Postgres?ref=main-postgres"
   region                = var.region
   project               = var.project
   environment           = var.environment
@@ -115,8 +115,8 @@ module "rds" {
   default_tags          = var.default_tags
   db_subnet_ids         = module.vpc.database_subnets_id
   db_security_group_ids = [module.vpc.database_security_group_id]
-  instance_class        = var.mysql_db_type
-  engine_version        = "8.0"
+  instance_class        = var.postgres_db_type
+  engine_version        = "16"
   username              = "root"
   multi_az              = var.enable_tier_two ? true : false
   require_tls           = false
@@ -128,7 +128,7 @@ module "rds" {
 }
 
 module "management_vm" {
-  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/VM-Management?ref=main"
+  source             = "git::https://github.com/wso2/aws-cloud-terraform-modules.git//Compute/VM-Management?ref=main-postgres"
   region             = var.region
   project            = var.project
   environment        = var.environment
