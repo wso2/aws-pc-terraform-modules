@@ -117,7 +117,7 @@ module "rds" {
   db_security_group_ids = [module.vpc.database_security_group_id]
   instance_class        = var.postgres_db_type
   engine_version        = "16"
-  username              = "root"
+  username              = "postgres"
   multi_az              = var.enable_tier_two ? true : false
   require_tls           = false
   deletion_protection   = false
