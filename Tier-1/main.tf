@@ -156,9 +156,6 @@ module "customizations" {
   application      = var.application
   eks_cluster_name = module.eks.cluster_name
 
-  ecr_name                         = var.ecr_name
-  eks_node_group_role_iam_role_arn = module.eks_node_group_role.iam_role_arn
-
   git_oidc_provider_arn = var.git_oidc_provider_arn
   k8s_repo              = var.k8s_repo
 }

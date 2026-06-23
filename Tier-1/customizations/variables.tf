@@ -25,14 +25,6 @@ variable "eks_cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
 }
-variable "eks_node_group_role_iam_role_arn" {
-  description = "EKS node group role arns"
-  type        = string
-}
-variable "ecr_name" {
-  description = "ECR name"
-  type        = string
-}
 variable "k8s_repo" {
   type        = string
   description = "Git repo name storing APIM application K8/HELM artifacts (org/repo)"
